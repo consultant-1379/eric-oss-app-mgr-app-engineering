@@ -1,0 +1,154 @@
+{
+  "thresholds":{
+    "checks{TestCaseTag:legacy}":[
+      {
+        "threshold":"rate == 1",
+        "abortOnFail":true
+      }
+    ],
+    "App Onboard Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "Enable App Duration":[
+      "p(99)<1500",
+      "avg<1500",
+      "med<1500"
+    ],
+    "Instantiating Duration":[
+      "p(99)<300000",
+      "avg<300000",
+      "med<300000"
+    ],
+    "Terminating Duration":[
+      "p(99)<180000",
+      "avg<180000",
+      "med<180000"
+    ],
+    "Delete App Instance Duration":[
+      "p(99)<35000",
+      "avg<35000",
+      "med<35000"
+    ],
+    "Disable App Duration":[
+      "p(99)<1500",
+      "avg<1500",
+      "med<1500"
+    ],
+    "Delete App Without Instance Duration":[
+      "p(99)<5000",
+      "avg<5000",
+      "med<5000"
+    ],
+    "ACM Initialize Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Deinitialize Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Enable Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Disable Duration":[
+    "p(99)<900000",
+    "avg<900000",
+    "med<900000"
+    ],
+    "ACM Create App Instance Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Onboard App Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Undeploy App Instance Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Delete App Instance Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Deploy App Instance Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Delete Onboarding Job Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Upgrade App Instance Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Update App Instance Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "http_req_failed{TestCaseTag:legacy}":[
+      "rate<=0.01"
+    ]
+  },
+  "scenarios":
+  {
+    "acmrTest":{
+      "tags":{
+        "TestCaseTag":"New"
+      },
+      "executor": "per-vu-iterations",
+      "startTime":"0s",
+      "vus": 1,
+      "iterations": 1,
+      "exec":"functionale2eFlowACM_R",
+      "maxDuration":"30m",
+      "env":{
+        "CSAR_FILE_NAME_03":"eric-oss-5gcnr-1-clash.csar",
+        "CSAR_FILE_NAME_04":"eric-oss-5gcnr-2-clash.csar"
+      }
+    },
+    "acmrTest_Parallel":{
+      "tags":{
+      "TestCaseTag":"New"
+      },
+      "executor": "per-vu-iterations",
+      "startTime":"25m",
+      "vus": 3,
+      "maxDuration":"20m",
+      "iterations": 1,
+      "exec":"functionale2eFlowACM_R_Parallel"
+    },
+    "functionalTestCases":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"0s",
+      "vus":1,
+      "iterations":1,
+      "exec":"functionale2eFlow",
+      "maxDuration":"30m",
+      "env":{
+        "CSAR_FILE_NAME_01":"eric-oss-5gcnr-1.1.104-0.csar",
+        "CSAR_FILE_NAME_02":"eric-oss-5gcnr-1.1.105-0.csar"
+      }
+    }
+  },
+  "setupTimeout": "1200s",
+  "insecureSkipTLSVerify":true
+}

@@ -1,0 +1,144 @@
+#!/usr/bin/env groovy
+package pipeline
+
+//def bob = "bob/bob -r \${WORKSPACE}/ci/src/main/rulesets/ruleset2.0.yaml"
+def defaultBobImage = 'armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob.2.0:1.7.0-87'
+def bob = new BobCommand()
+        .bobImage(defaultBobImage)
+        .envVars([
+                PWD: '${PWD}',
+                WORKSPACE:'${WORKSPACE}',
+                IMAGE_VERSION:'${IMAGE_VERSION}',
+                HOME: '${HOME}',
+                GERRIT_USER_SECRET: '${GERRIT_USER_SECRET}'
+        ])
+        .needDockerSocket(true)
+        .toString()
+pipeline {
+    agent {
+        label "common_agents"
+    }
+
+    parameters {
+        string(name: 'GERRIT_USER_SECRET_ID',
+                defaultValue: 'ossapps100-user-credentials',
+                description: 'Functional User creds')
+    }
+
+    options { timestamps() }
+
+    environment {
+        GERRIT_USER_SECRET = credentials("${params.GERRIT_USER_SECRET_ID}")
+    }
+
+    stages {
+        stage('Cleaning Git Repo') {
+            steps {
+                sh 'git clean -xdff'
+                sh 'git submodule sync'
+                sh 'git submodule update --init --recursive'
+            }
+        }
+        stage('Bump Bob py3kubehelmbuilder awscli Version') {
+            steps {
+                sh "${bob} set-bob-py3kubehelmbuilder-awscli-env-variables bump-service-version"
+                script {
+                    env.IMAGE_VERSION = readFile('artifact.properties').trim()
+                }
+            }
+        }
+        stage('Build Bob py3kubehelmbuilder awscli') {
+            steps {
+                sh "${bob} set-bob-py3kubehelmbuilder-awscli-env-variables build-docker-image"
+            }
+        }
+        stage('Publish Bob py3kubehelmbuilder awscli') {
+            steps {
+                sh "${bob} set-bob-py3kubehelmbuilder-awscli-env-variables publish-docker-image"
+            }
+        }
+        stage('Add changes to Version file of Bob py3kubehelmbuilder awscli') {
+            steps {
+                sh "${bob} set-bob-py3kubehelmbuilder-awscli-env-variables add-changes-to-version-file"
+            }
+        }
+        stage('Bump k6 App Mgr Version') {
+            steps {
+                sh "${bob} set-k6-app-mgr-env-variables bump-service-version"
+                script {
+                    env.IMAGE_VERSION = readFile('artifact.properties').trim()
+                }
+            }
+        }
+        stage('Build k6 App Mgr') {
+            steps {
+                    sh "${bob} set-k6-app-mgr-env-variables build-docker-image"
+            }
+        }
+        stage('Publish k6 App Mgr') {
+            steps {
+                sh "${bob} set-k6-app-mgr-env-variables publish-docker-image"
+            }
+        }
+        stage('Add changes to Version file of k6 App Mgr') {
+            steps {
+                sh "${bob} set-k6-app-mgr-env-variables add-changes-to-version-file"
+            }
+        }
+//        stage('Push up changes to version files') {
+//            steps {
+//                sh "${bob} push-changes-to-version-files"
+//            }
+//        }
+        stage('Archive artifact properties file') {
+            steps {
+                archiveArtifacts artifacts: 'artifact.properties', onlyIfSuccessful: true
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sh "docker system prune -a -f"
+            }
+        }
+    }
+}
+// More about @Builder: http://mrhaki.blogspot.com/2014/05/groovy-goodness-use-builder-ast.html
+import groovy.transform.builder.Builder
+import groovy.transform.builder.SimpleStrategy
+
+@Builder(builderStrategy = SimpleStrategy, prefix = '')
+class BobCommand {
+    def bobImage = 'bob.2.0:latest'
+    def envVars = [:]
+    def needDockerSocket = false
+
+    String toString() {
+        def env = envVars
+                .collect({ entry -> "-e ${entry.key}=\"${entry.value}\"" })
+                .join(' ')
+
+        def cmd = """echo \"\\\"\$STAGE_NAME\\\" `date '+%s'`\" >> .stages;
+            |docker run
+            |--init
+            |--rm
+            |--workdir \${PWD}
+            |--user \$(id -u):\$(id -g)
+            |-v \${PWD}:\${PWD}
+            |-v \${HOME}/.docker:\${HOME}/.docker
+            |-v \${HOME}/.gitconfig:\${HOME}/.gitconfig
+            |${needDockerSocket ? '-v /var/run/docker.sock:/var/run/docker.sock' : ''}
+            |${env}
+            |\$(for group in \$(id -G); do printf ' --group-add %s' "\$group"; done)
+            |--group-add \$(stat -c '%g' /var/run/docker.sock)
+            |${bobImage}
+            |-r ./ci/pipeline/publish/publish.yaml
+            |"""
+        return cmd
+                .stripMargin()           // remove indentation
+                .replace('\n', ' ')      // join lines
+                .replaceAll(/[ ]+/, ' ') // replace multiple spaces by one
+    }
+}

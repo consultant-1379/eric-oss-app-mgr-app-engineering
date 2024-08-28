@@ -1,0 +1,25 @@
+replicaCount: 1
+
+images:
+  httpdCsarImage: ${pythonFlaskHelperDockerTag}
+  testwareImage: ${defaultDockerTag}
+
+build:
+  version: ${version}
+  name: ${name}
+
+env:
+  APP_VERSION: ${version}
+  BUILD_URL: 'https://fem8s11-eiffel052.eiffel.gic.ericsson.se:8443/jenkins/job/APPMGR-K6-Functional-Testing/'
+  STAGING_TYPE: "APPLICATION"
+  PRODUCT: ""
+  PRODUCT_VERSION: ""
+  ENVIRONMENT: "development"
+  hostname_url: ""
+  csar_path: ""
+  keycloak_url: ""
+  OPTIONS_FILE: "../resources/config/default.options.json"
+  appmgr_user: ""
+  appmgr_pass: ""
+  TEST_VERSION: ""
+  TESTWARE_NAME: ""

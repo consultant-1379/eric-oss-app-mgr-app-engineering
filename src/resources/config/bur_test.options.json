@@ -1,0 +1,21 @@
+{
+  "thresholds": {
+  },
+  "scenarios": {
+
+    "burTest":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor": "per-vu-iterations",
+      "startTime":"0s",
+      "vus": 1,
+      "iterations": 1,
+      "exec":"bur_testing",
+      "maxDuration":"12m",
+      "env":{
+      }
+    }
+  },
+  "insecureSkipTLSVerify": true
+}

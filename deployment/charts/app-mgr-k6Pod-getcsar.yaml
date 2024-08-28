@@ -1,0 +1,66 @@
+#  -------------------------------------------------------------------------------
+#  *******************************************************************************
+#  * COPYRIGHT Ericsson 2021
+#  *
+#  * The copyright to the computer program(s) herein is the property of
+#  * Ericsson Inc. The programs may be used and/or copied only with written
+#  * permission from Ericsson Inc. or in accordance with the terms and
+#  * conditions stipulated in the agreement/contract under which the
+#  * program(s) have been supplied.
+#  *******************************************************************************
+#  *------------------------------------------------------------------------------
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: app-mgr-k6-testsuite
+  labels:
+    app: app-mgr-k6
+spec:
+  containers:
+    - name: app-mgr-k6
+      env:
+        - name: K6_OUT
+          value: "json=test-output.json"
+        - name: hostname_url
+          value: "%hostname_url%"
+        - name: csar_path
+          value: "%csar_path%"
+        - name: rapp_staging
+          value: "%rapp_staging%"
+        - name: BUILD_URL
+          value: "%BUILD_URL%"
+        - name: rapp_add_params
+          valueFrom:
+             secretKeyRef:
+               name: k6-app-mgr-secret
+               key: additional_params
+      image: armdocker.rnd.ericsson.se/proj-eric-oss-dev-test/eric-oss-app-mgr-test:latest
+      volumeMounts:
+        - name: workdir
+          mountPath: /home/csar/
+      imagePullPolicy: Always
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        runAsNonRoot: false
+        runAsUser: 0
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+  initContainers:
+    - name: init-getcsar
+      image: armdocker.rnd.ericsson.se/proj-adp-cicd-dev/eric-adp-cicd-curl:latest
+      command: ['sh', '-c', 'curl %csar_path% -H "Authorization: Basic b3NzYWRtaW46QUtDcDhpaGY4VkttYlo2c2taaG9YeFFaZnBOZXZrWTFIVWhjalNCRTk4bVR5Tk15TUd2M01EbWRpQ0pEUURvdzNzQWsxWEw4Zw==" --output /home/csar/remotecsar.csar']
+      volumeMounts:
+        - name: workdir
+          mountPath: /home/csar/
+  dnsPolicy: ClusterFirst
+  imagePullSecrets:
+    - name: k8s-registry-secret
+  schedulerName: default-scheduler
+  restartPolicy: Never
+  securityContext: {}
+  terminationGracePeriodSeconds: 5
+  volumes:
+    - name: workdir
+      emptyDir: {}

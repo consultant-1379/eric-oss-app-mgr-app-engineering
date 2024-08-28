@@ -1,0 +1,55 @@
+{
+  "characteristics": {
+    "metrics": [
+      {
+        "description": "App Onboarding average Memory Usage",
+        "microservice": {"name": "eric-oss-app-onboarding", "displayName": "App Onboarding"},
+        "query": "rate(container_memory_working_set_bytes{container ='eric-oss-app-onboarding'}[15m]) % 100",
+        "thresholds": [
+          {
+            "operator": "LESS_OR_EQUAL_TO",
+            "value": 90,
+            "legacy": false
+          }
+        ]
+      },
+      {
+        "description": "App LCM average Memory Usage",
+        "microservice": {"name": "eric-oss-app-lcm", "displayName": "App LCM"},
+        "query": "rate(container_memory_working_set_bytes{container ='eric-oss-app-lcm'}[15m]) % 100",
+        "thresholds": [
+          {
+            "operator": "LESS_OR_EQUAL_TO",
+            "value": 90,
+            "legacy": false
+          }
+        ]
+      },
+      {
+        "description": "App Onboarding average CPU Usage",
+        "microservice": {"name": "eric-oss-app-onboarding", "displayName": "App Onboarding"},
+        "query": "rate(container_cpu_user_seconds_total{container ='eric-oss-app-onboarding'}[15m]) * 100",
+        "thresholds": [
+          {
+            "operator": "LESS_OR_EQUAL_TO",
+            "value": 90,
+            "legacy": false
+          }
+        ]
+      },
+      {
+        "description": "App LCM average CPU Usage",
+        "microservice": {"name": "eric-oss-app-lcm", "displayName": "App LCM"},
+        "query": "rate(container_cpu_user_seconds_total{container ='eric-oss-app-lcm'}[15m]) * 100",
+        "thresholds": [
+          {
+            "operator": "LESS_OR_EQUAL_TO",
+            "value": 90,
+            "legacy": false
+          }
+        ]
+      }
+    ]
+  }
+}
+

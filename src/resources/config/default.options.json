@@ -1,0 +1,283 @@
+{
+  "thresholds":{
+    "checks{TestCaseTag:legacy}":[
+      {
+        "threshold":"rate == 1",
+        "abortOnFail":true
+      }
+    ],
+    "App Onboard Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "Enable App Duration":[
+      "p(99)<1500",
+      "avg<1500",
+      "med<1500"
+    ],
+    "Instantiating Duration":[
+      "p(99)<300000",
+      "avg<300000",
+      "med<300000"
+    ],
+    "Terminating Duration":[
+      "p(99)<180000",
+      "avg<180000",
+      "med<180000"
+    ],
+    "Delete App Instance Duration":[
+      "p(99)<35000",
+      "avg<35000",
+      "med<35000"
+    ],
+    "Disable App Duration":[
+      "p(99)<1500",
+      "avg<1500",
+      "med<1500"
+    ],
+    "Delete App Without Instance Duration":[
+      "p(99)<5000",
+      "avg<5000",
+      "med<5000"
+    ],
+    "ACM Initialize Duration":[
+      "p(99)<200000",
+      "avg<200000",
+      "med<200000"
+    ],
+    "ACM Deinitialize Duration":[
+      "p(99)<55000",
+      "avg<55000",
+      "med<55000"
+    ],
+    "ACM Enable Duration":[
+      "p(99)<2000",
+      "avg<2000",
+      "med<2000"
+    ],
+    "ACM Disable Duration":[
+    "p(99)<2000",
+    "avg<2000",
+    "med<2000"
+    ],
+    "ACM Create App Instance Duration":[
+      "p(99)<3000",
+      "avg<3000",
+      "med<3000"
+    ],
+    "ACM Onboard App Duration":[
+      "p(99)<100000",
+      "avg<100000",
+      "med<100000"
+    ],
+    "ACM Undeploy App Instance Duration":[
+      "p(99)<90000",
+      "avg<90000",
+      "med<90000"
+    ],
+    "ACM Delete App Instance Duration":[
+      "p(99)<60000",
+      "avg<60000",
+      "med<60000"
+    ],
+    "ACM Deploy App Instance Duration":[
+      "p(99)<300000",
+      "avg<300000",
+      "med<300000"
+    ],
+    "ACM Delete Onboarding Job Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "ACM Upgrade App Instance Duration":[
+      "p(99)<300000",
+      "avg<300000",
+      "med<300000"
+    ],
+    "ACM Update App Instance Duration":[
+      "p(99)<300000",
+      "avg<300000",
+      "med<300000"
+    ],
+    "ACM Get Apps Duration":[
+      "p(99)<3000",
+      "avg<3000",
+      "med<3000"
+    ],
+    "ACM Get Jobs Duration":[
+      "p(99)<3000",
+      "avg<3000",
+      "med<3000"
+    ],
+    "ACM Delete App Duration":[
+      "p(99)<120000",
+      "avg<120000",
+      "med<120000"
+    ],
+    "http_req_failed{TestCaseTag:legacy}":[
+      "rate<=0.01"
+    ]
+  },
+  "scenarios":
+  {
+    "acmrTest":{
+      "tags":{
+        "TestCaseTag":"New"
+      },
+      "executor": "per-vu-iterations",
+      "startTime":"0s",
+      "vus": 1,
+      "iterations": 1,
+      "exec":"functionale2eFlowACM_R",
+      "maxDuration":"30m",
+      "env":{
+        "CSAR_FILE_NAME_03":"eric-oss-5gcnr-1-clash.csar",
+        "CSAR_FILE_NAME_04":"eric-oss-5gcnr-2-clash.csar"
+      }
+    },
+    "SefAcmrParallel":{
+      "tags":{
+        "TestCaseTag":"New"
+      },
+      "executor": "per-vu-iterations",
+      "startTime":"25m",
+      "maxDuration":"40m",
+      "vus": 3,
+      "iterations": 1,
+      "exec":"SEF_ACM_R_Parallel"
+    },
+    "functionalTestCases":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"0s",
+      "vus":1,
+      "iterations":1,
+      "exec":"functionale2eFlow",
+      "maxDuration":"30m",
+      "env":{
+        "CSAR_FILE_NAME_01":"eric-oss-5gcnr-1.1.104-0.csar",
+        "CSAR_FILE_NAME_02":"eric-oss-5gcnr-1.1.105-0.csar"
+      }
+    },
+    "onboardApp01":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"28m",
+      "vus":1,
+      "iterations":1,
+      "exec":"parallel_onboarding",
+      "maxDuration":"20m",
+      "env":{
+        "CSAR_FILE_NAME":"eric-oss-5gcnr-1.1.104-0.csar",
+        "CALCULATE_METRIC": "false"
+      }
+    },
+    "onboardApp02":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"28m",
+      "vus":1,
+      "iterations":1,
+      "exec":"parallel_onboarding",
+      "maxDuration":"20m",
+      "env":{
+        "CSAR_FILE_NAME":"eric-oss-hello-world-multiple-microservices-go-app.csar",
+        "CALCULATE_METRIC": "false"
+      }
+    },
+    "onboardApp03":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"28m",
+      "vus":1,
+      "iterations":1,
+      "exec":"parallel_onboarding",
+      "maxDuration":"20m",
+      "env":{
+        "CSAR_FILE_NAME":"ae-helloworldAppPackage.csar",
+        "CALCULATE_METRIC": "false"
+      }
+    },
+    "parallelEnableApp":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"45m",
+      "vus":3,
+      "iterations":1,
+      "exec":"parallel_enable",
+      "maxDuration":"30s",
+      "env":{
+        "MODE":"ENABLED"
+      }
+    },
+    "parallel_app_instantiation":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"45m6s",
+      "vus":3,
+      "iterations":1,
+      "exec":"parallel_app_instantiation",
+      "maxDuration":"5m"
+    },
+    "parallel_instance_termination":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"47m30s",
+      "vus":3,
+      "iterations":1,
+      "exec":"parallel_instance_termination",
+      "maxDuration":"5m"
+    },
+    "parallel_app_instantiation_delete":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"48m45s",
+      "vus":3,
+      "iterations":1,
+      "exec":"parallel_app_instantiation_delete",
+      "maxDuration":"2m"
+    },
+    "parallelDisableApp":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"48m40s",
+      "vus":3,
+      "iterations":1,
+      "exec":"parallel_disable_app",
+      "maxDuration":"50s"
+    },
+    "parallelAppDeletion":{
+      "tags":{
+        "TestCaseTag":"Legacy"
+      },
+      "executor":"per-vu-iterations",
+      "startTime":"49m35s",
+      "vus":3,
+      "iterations":1,
+      "exec":"parallelAppDeletionFlow",
+      "maxDuration":"2m"
+    }
+  },
+  "setupTimeout": "1200s",
+  "insecureSkipTLSVerify":true
+}

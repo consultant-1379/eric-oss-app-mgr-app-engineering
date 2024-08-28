@@ -1,0 +1,62 @@
+{
+  "thresholds":{
+    "checks{TestCaseTag:legacy}":[
+      {
+        "threshold":"rate == 1",
+        "abortOnFail":true
+      }
+    ],
+    "App Onboard Duration":[
+      "p(99)<900000",
+      "avg<900000",
+      "med<900000"
+    ],
+    "Enable App Duration":[
+      "p(99)<1500",
+      "avg<1500",
+      "med<1500"
+    ],
+    "Instantiating Duration":[
+      "p(99)<300000",
+      "avg<300000",
+      "med<300000"
+    ],
+    "Terminating Duration":[
+      "p(99)<180000",
+      "avg<180000",
+      "med<180000"
+    ],
+    "Delete App Instance Duration":[
+      "p(99)<35000",
+      "avg<35000",
+      "med<35000"
+    ],
+    "Disable App Duration":[
+      "p(99)<1500",
+      "avg<1500",
+      "med<1500"
+    ],
+    "Delete App Without Instance Duration":[
+      "p(99)<5000",
+      "avg<5000",
+      "med<5000"
+    ],
+    "http_req_failed{TestCaseTag:legacy}":[
+      "rate<=0.01"
+    ]
+  },
+  "scenarios": {
+    "SefAcmrParallel":{
+      "tags":{
+        "TestCaseTag":"New"
+      },
+      "executor": "per-vu-iterations",
+      "maxDuration":"60m",
+      "vus": 1,
+      "iterations": 1,
+      "exec":"SEF_ACM_R_Parallel"
+    }
+  },
+  "setupTimeout": "1200s",
+  "insecureSkipTLSVerify": true
+}

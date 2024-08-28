@@ -1,0 +1,5 @@
+      ********* APPLICATION ENGINEERING TESTS DEPLOYED *********
+
+Application Engineering Tests have started on the deployment {{ .Values.env.DEPLOYMENT_NAME }}.
+
+Testware {{.Values.build.name}} - {{.Values.build.version}} was deployed to {{ .Values.env.DEPLOYMENT_NAME }}.

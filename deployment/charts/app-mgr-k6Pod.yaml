@@ -1,0 +1,87 @@
+#  -------------------------------------------------------------------------------
+#  *******************************************************************************
+#  * COPYRIGHT Ericsson 2021
+#  *
+#  * The copyright to the computer program(s) herein is the property of
+#  * Ericsson Inc. The programs may be used and/or copied only with written
+#  * permission from Ericsson Inc. or in accordance with the terms and
+#  * conditions stipulated in the agreement/contract under which the
+#  * program(s) have been supplied.
+#  *******************************************************************************
+#  *------------------------------------------------------------------------------
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: app-mgr-k6-testsuite
+  labels:
+    app: app-mgr-k6
+spec:
+  containers:
+    - name: app-mgr-k6
+      env:
+        - name: K6_OUT
+          value: "json=test-output.json"
+        - name: hostname_url
+          valueFrom:
+            configMapKeyRef:
+              name: testware-hostnames
+              key: appmgr
+        - name: csar_path
+          value: "%csar_path%"
+        - name: ENVIRONMENT
+          value: production
+        - name: rapp_staging
+          value: "%rapp_staging%"
+        - name: keycloak_url
+          valueFrom:
+            configMapKeyRef:
+              name: testware-hostnames
+              key: iam
+        - name: BUILD_URL
+          value: "%BUILD_URL%"
+        - name: SEF_STATUS
+          value: "%SEF_STATUS%"
+        - name: appmgr_user
+          valueFrom:
+             secretKeyRef:
+               name: k6-app-mgr-functional-secret
+               key: app_mgr_user
+        - name: appmgr_pass
+          valueFrom:
+             secretKeyRef:
+               name: k6-app-mgr-functional-secret
+               key: app_mgr_pass
+      image: armdocker.rnd.ericsson.se/proj-eric-oss-dev-test/eric-oss-app-mgr-test:latest
+      volumeMounts:
+        - name: workdir
+          mountPath: /csars-empty-dir/
+      imagePullPolicy: Always
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        runAsNonRoot: false
+        runAsUser: 0
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+    - name: testware-helper-sidecar
+      image: armdocker.rnd.ericsson.se/proj-eric-oss-dev-test/eric-oss-app-eng-python-helper:latest
+      imagePullPolicy: Always
+      resources: { }
+      securityContext:
+        allowPrivilegeEscalation: true
+        runAsNonRoot: false
+        runAsUser: 0
+      volumeMounts:
+        - name: workdir
+          mountPath: /csars-empty-dir/
+  dnsPolicy: ClusterFirst
+  imagePullSecrets:
+    - name: k8s-registry-secret
+  schedulerName: default-scheduler
+  restartPolicy: Never
+  securityContext: {}
+  terminationGracePeriodSeconds: 5
+  volumes:
+    - name: workdir
+      emptyDir: {}

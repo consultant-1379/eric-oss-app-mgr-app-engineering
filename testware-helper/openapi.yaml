@@ -1,0 +1,90 @@
+openapi: 3.0.1
+info:
+  title: Testware helper
+  version: v2
+  description: API provided to download files from artifactory and upload to EIAP
+  contact:
+    name: Product Engineering Team
+    url: https://confluence-oss.seli.wh.rnd.internal.ericsson.com/display/IDUN/Product+Engineering
+    email: PDLDAGDADA@pdl.internal.ericsson.com
+  x-logo:
+    url: ""
+servers:
+  - url: http://localhost
+    description: Side car container is accessible from localhost
+tags:
+  - name: Upload csar downloaded from artifactory
+    description: API to upload csar to EIAP downloaded from artifactory.
+paths:
+  /v2/upload-csar-to-eiap:
+    post:
+      tags:
+        - Upload csar downloaded from artifactory
+      summary: Upload csar downloaded from artifactory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/upload-body"
+      responses:
+        "200":
+          description: File downloaded Successfully from artifactory and uploaded to EIAP
+            endpoint
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/upload-response"
+        "404":
+          description: File not found from the artifactory
+          content:
+            application/json:
+              example:
+                error: "unable to download the csar or csar hash\\nError: Error 404"
+        "500":
+          description: Some error occured while dealing with csar
+          content:
+            application/json:
+              example:
+                error: Problem occured when trying to deal with csar, Error 500
+components:
+  schemas:
+    upload-body:
+      description: The object consists of the parameters required for upload endpoint
+      type: object
+      properties:
+        url:
+          type: string
+          description: EIAP url where the file needs to be uploaded
+          example: https://eiap_endpoint/upload
+        file:
+          type: string
+          description: exact name of the file on artifactory
+          example: something.csar
+        artifactory_url:
+          type: string
+          description: provide the artifactory url for your project
+          example: https://arm.seli.gic.ericsson.se/artifactory/proj-eric-oss-product-engineering-generic-local/csars/
+        field:
+          type: string
+          description: provide the name of the upload field otherwise default value 'file' will be used
+          example: upload
+        headers:
+          type: string
+          description: provide the headers with the auth token to access EIAP
+          example:
+            cookie: JSESSIONID=123klh123iug-123kjbk1-2n1
+    upload-response:
+      type: object
+      properties:
+        eiap_response:
+          type: string
+          description: response received from EIAP
+        eiap_status:
+          type: int
+          description: status code returned from EIAP endpoint
+          example: 200
+        elapsed_time:
+          type: double
+          description: time taken by endpoint to process the upload in seconds
+          example: 1.23
